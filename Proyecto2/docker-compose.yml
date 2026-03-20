@@ -1,0 +1,44 @@
+# docker-compose.yml
+# Infraestructura - Proyecto 2 SO1
+# Carnet: 202011394 - Marvin Geobani Pretzantzín Rosalío
+
+version: "3.8"
+
+services:
+  # Base de datos Valkey (Redis-compatible)
+  valkey:
+    image: valkey/valkey:latest
+    container_name: valkey_so1_202011394
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - valkey_data:/data
+    networks:
+      - so1_network
+
+  # Dashboard Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana_so1_202011394
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ADMIN_USER=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - valkey
+    networks:
+      - so1_network
+
+volumes:
+  valkey_data:
+  grafana_data:
+
+networks:
+  so1_network:
+    driver: bridge

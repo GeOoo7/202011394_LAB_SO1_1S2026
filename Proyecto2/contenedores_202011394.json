@@ -1,0 +1,60 @@
+{
+  "title": "Panel de Contenedores - 202011394",
+  "uid": "so1_202011394",
+  "tags": ["SO1", "contenedores", "202011394"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "refresh": "20s",
+  "time": { "from": "now-1h", "to": "now" },
+  "templating": { "list": [] },
+  "annotations": { "list": [] },
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Total RAM",
+      "gridPos": {"x":0,"y":0,"w":8,"h":4},
+      "options": {"colorMode":"background","graphMode":"none","textMode":"auto"},
+      "fieldConfig": {"defaults":{"unit":"kbytes","color":{"mode":"thresholds"},"thresholds":{"steps":[{"color":"blue","value":null}]}}},
+      "targets": [{"datasource":{"uid":"valkey_so1_202011394"},"query":"JSON.GET so1:snapshot:latest $.total_ram_kb","type":"timeseries"}]
+    },
+    {
+      "id": 2, "type": "stat", "title": "Free RAM",
+      "gridPos": {"x":8,"y":0,"w":8,"h":4},
+      "options": {"colorMode":"background","graphMode":"none","textMode":"auto"},
+      "fieldConfig": {"defaults":{"unit":"kbytes","color":{"mode":"thresholds"},"thresholds":{"steps":[{"color":"green","value":null}]}}},
+      "targets": [{"datasource":{"uid":"valkey_so1_202011394"},"query":"JSON.GET so1:snapshot:latest $.free_ram_kb","type":"timeseries"}]
+    },
+    {
+      "id": 3, "type": "stat", "title": "Total Contenedores Eliminados",
+      "gridPos": {"x":16,"y":0,"w":8,"h":4},
+      "options": {"colorMode":"background","graphMode":"none","textMode":"auto"},
+      "fieldConfig": {"defaults":{"color":{"mode":"thresholds"},"thresholds":{"steps":[{"color":"red","value":null}]}}},
+      "targets": [{"datasource":{"uid":"valkey_so1_202011394"},"query":"LLEN so1:killed:history","type":"timeseries"}]
+    },
+    {
+      "id": 4, "type": "timeseries", "title": "Grafica de Uso de RAM en el Tiempo",
+      "gridPos": {"x":0,"y":4,"w":24,"h":8},
+      "options": {"legend":{"displayMode":"list","placement":"bottom"},"tooltip":{"mode":"single"}},
+      "fieldConfig": {"defaults":{"unit":"kbytes","color":{"mode":"palette-classic"}}},
+      "targets": [{"datasource":{"uid":"valkey_so1_202011394"},"query":"LRANGE so1:ram:history 0 99","type":"timeseries"}]
+    },
+    {
+      "id": 5, "type": "piechart", "title": "Top 5 Contenedores por RAM",
+      "gridPos": {"x":0,"y":12,"w":8,"h":8},
+      "options": {"legend":{"displayMode":"table","placement":"right"},"pieType":"pie"},
+      "targets": [{"datasource":{"uid":"valkey_so1_202011394"},"query":"GET so1:top:ram","type":"timeseries"}]
+    },
+    {
+      "id": 6, "type": "piechart", "title": "Top 5 Contenedores por CPU",
+      "gridPos": {"x":8,"y":12,"w":8,"h":8},
+      "options": {"legend":{"displayMode":"table","placement":"right"},"pieType":"pie"},
+      "targets": [{"datasource":{"uid":"valkey_so1_202011394"},"query":"GET so1:top:cpu","type":"timeseries"}]
+    },
+    {
+      "id": 7, "type": "stat", "title": "RAM Usada",
+      "gridPos": {"x":16,"y":12,"w":8,"h":8},
+      "options": {"colorMode":"background","graphMode":"area","textMode":"auto"},
+      "fieldConfig": {"defaults":{"unit":"kbytes","color":{"mode":"thresholds"},"thresholds":{"steps":[{"color":"yellow","value":null},{"color":"orange","value":4000000},{"color":"red","value":7000000}]}}},
+      "targets": [{"datasource":{"uid":"valkey_so1_202011394"},"query":"JSON.GET so1:snapshot:latest $.used_ram_kb","type":"timeseries"}]
+    }
+  ]
+}
